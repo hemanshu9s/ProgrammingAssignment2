@@ -1,43 +1,35 @@
 ##Hemanshu Singh
-makeCacheMatrix <- function( m = matrix() ) {
-  
-  ## Initialize the inverse property
-  i <- NULL
-  set <- function( matrix ) {
-    m <<- matrix
-    i <<- NULL
-  }
-  ## Method the get the matrix
-  get <- function() {
-    ## Return the matrix
-    m
-  }
-  ## Way to set the inverse of the matrix
-  setInverse <- function(inverse) {
-    i <<- inverse
-  }
-  
-  ## Way to get the inverse of the matrix
-  getInverse <- function() {
-    ## Back the inverse property
-    i
-  }
-  ## Back a list of the methods
-  list(set = set, get = get,
-       setInverse = setInverse,
-       getInverse = getInverse)
+## There are two functions in this file. The first creates a matrix that can cache
+## its inverse, and the second calculates the inverse, retrieving the cached value
+## if it is available.
+
+
+## Returns list with four functions that read and write a matrix,
+## as well as read and write the inverse of that matrix.
+makeCacheMatrix <- function(mx = matrix()) {
+    inverse <- NULL
+    set <- function(m) {
+        mx <<- m
+        inverse <<- NULL
+    }
+    get <- function() mx
+    set_inverse <- function(i) inverse <<- i
+    get_inverse <- function() inverse
+    
+    list(set = set, get = get, set_inverse = set_inverse, get_inverse = get_inverse)
 }
-## Compute the inverse of the unique matrix back by "makeCacheMatrix"
-## Back to a matrix  "m"
-m <- x$getInverse()
-if( !is.null(m) ) {
-  message("getting cached data")
-  return(m)
-}
-## Compute the inverse via matrix multiplication
-m <- solve(data) %*% data
-## Set the inverse to the object
-x$setInverse(m)
-## Coming back the matrix
-m
+
+
+## Gets the inverse of a matrix. If the value is cached, it will get that value.
+## If not, it will solve for the inverse and then store the value in the cache.
+cacheSolve <- function(x, ...) {
+    inverse <- x$get_inverse()
+    if(!is.null(inverse)) {
+        message("getting cached data")
+        return(inverse)
+    }
+    matrix <- x$get()
+    inverse <- solve(matrix, ...)
+    x$set_inverse(inverse)
+    inverse
 }
